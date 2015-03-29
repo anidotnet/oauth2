@@ -50,6 +50,9 @@ type Token struct {
 
 // Type returns t.TokenType if non-empty, else "Bearer".
 func (t *Token) Type() string {
+	if t.TokenType == "bearer" {
+		return "Bearer"
+	}
 	if t.TokenType != "" {
 		return t.TokenType
 	}
