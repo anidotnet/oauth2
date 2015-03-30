@@ -14,7 +14,7 @@ var Endpoint = oauth2.Endpoint{
     RevokeURL:"https://www.box.com/api/oauth2/revoke",
 }
 
-// Destroys both access_token and refresh_token
+// Destroys both access_token and refresh_token for Box
 func Revoke(config *oauth2.Config, token *oauth2.Token) error {
     v := url.Values {
         "client_id":		{config.ClientID},
