@@ -305,7 +305,14 @@ func (s *reuseTokenSource) Token() (*Token, error) {
 	if err != nil {
 		return nil, err
 	}
+	if s.t.ProcessRefresh != nil {
+		// Process the token refresh event
+		s.t.ProcessRefresh(t)
+	}
+	// Set the handler to the new token to handle further refresh
+	t.ProcessRefresh = s.t.ProcessRefresh
 	s.t = t
+
 	return t, nil
 }
 

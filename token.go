@@ -46,7 +46,18 @@ type Token struct {
 	// raw optionally contains extra metadata from the server
 	// when updating a token.
 	raw interface{}
+
+	// Method to process the token refresh. If the application needs to
+	// persist the new token pairs, it can be implemented here.
+	//
+	// Some provider like Box, sends new refresh_token along with access_token,
+	// so each time it gets refreshed, the refresh token needs to be saved. App
+	// can use ProcessRefresh to store the new refresh_token if needed, else ignore.
+	// Using of ProcessRefresh is provider dependent.
+	ProcessRefresh TokenRefreshDelegate
 }
+
+type TokenRefreshDelegate func (*Token) error
 
 // Type returns t.TokenType if non-empty, else "Bearer".
 func (t *Token) Type() string {
