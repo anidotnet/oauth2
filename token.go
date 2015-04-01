@@ -54,7 +54,7 @@ type Token struct {
 	// so each time it gets refreshed, the refresh token needs to be saved. App
 	// can use ProcessRefresh to store the new refresh_token if needed, else ignore.
 	// Using of ProcessRefresh is provider dependent.
-	ProcessRefresh TokenRefreshDelegate
+	ProcessRefresh TokenRefreshDelegate `json:"-"`
 }
 
 type TokenRefreshDelegate func (*Token) error
