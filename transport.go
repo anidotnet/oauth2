@@ -28,8 +28,6 @@ type Transport struct {
 
 	mu     sync.Mutex                      // guards modReq
 	modReq map[*http.Request]*http.Request // original -> modified
-
-	debug bool
 }
 
 // RoundTrip authorizes and authenticates the request with an
@@ -48,20 +46,10 @@ func (t *Transport) RoundTrip(req *http.Request) (*http.Response, error) {
 	token.SetAuthHeader(req2)
 	t.setModReq(req, req2)
 
-	//debug request
-	if t.debug {
-		debugRequest(req)
-	}
-
 	res, err := t.base().RoundTrip(req2)
 	if err != nil {
 		t.setModReq(req, nil)
 		return nil, err
-	}
-
-	//debug response
-	if t.debug {
-		debugResponse(res)
 	}
 
 	res.Body = &onEOFReader{
@@ -103,6 +91,11 @@ func (t *Transport) setModReq(orig, mod *http.Request) {
 	} else {
 		t.modReq[orig] = mod
 	}
+}
+
+// Get the modified request for debugging purpose.
+func (t *Transport) GetModReq(orig *http.Request) *http.Request {
+	return t.modReq[orig]
 }
 
 // cloneRequest returns a clone of the provided *http.Request.

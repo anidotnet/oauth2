@@ -61,6 +61,10 @@ type TokenRefreshDelegate func (*Token) error
 
 // Type returns t.TokenType if non-empty, else "Bearer".
 func (t *Token) Type() string {
+	// Some providers like box.com sends "bearer" but accepts only "Bearer"
+	// only in request header.
+	// WARNING: It might create problem for those providers who accepts only
+	// "bearer" in header
 	if t.TokenType == "bearer" {
 		return "Bearer"
 	}

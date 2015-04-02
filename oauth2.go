@@ -57,8 +57,6 @@ type Config struct {
 	//
 	// Example: box.Revoke
 	RevokeHandler RevokeHandler
-
-	Debug	bool
 }
 
 // A TokenSource is anything that can return a token.
@@ -231,7 +229,7 @@ func contextTransport(ctx context.Context) http.RoundTripper {
 // HTTP transport will be obtained using the provided context.
 // The returned client and its Transport should not be modified.
 func (c *Config) Client(ctx context.Context, t *Token) *http.Client {
-	return NewClient(ctx, c.TokenSource(ctx, t), c.Debug)
+	return NewClient(ctx, c.TokenSource(ctx, t))
 }
 
 // TokenSource returns a TokenSource that returns t until t expires,
@@ -339,19 +337,7 @@ func retrieveToken(ctx context.Context, c *Config, v url.Values) (*Token, error)
 	if !bustedAuth {
 		req.SetBasicAuth(c.ClientID, c.ClientSecret)
 	}
-
-	//debug request
-	if c.Debug {
-		debugRequest(req)
-	}
-
 	r, err := hc.Do(req)
-
-	//debug response
-	if c.Debug {
-		debugResponse(r)
-	}
-
 	if err != nil {
 		return nil, err
 	}
@@ -512,7 +498,7 @@ type contextKey struct{}
 // As a special case, if src is nil, a non-OAuth2 client is returned
 // using the provided context. This exists to support related OAuth2
 // packages.
-func NewClient(ctx context.Context, src TokenSource, debugEnabled bool) *http.Client {
+func NewClient(ctx context.Context, src TokenSource) *http.Client {
 	if src == nil {
 		c, err := contextClient(ctx)
 		if err != nil {
@@ -524,7 +510,6 @@ func NewClient(ctx context.Context, src TokenSource, debugEnabled bool) *http.Cl
 		Transport: &Transport{
 			Base:   contextTransport(ctx),
 			Source: ReuseTokenSource(nil, src),
-			debug:	debugEnabled,
 		},
 	}
 }
