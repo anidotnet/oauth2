@@ -50,13 +50,6 @@ type Config struct {
 
 	// Scope specifies optional requested permissions.
 	Scopes []string
-
-	// Handler to revoke authentication. An implementation of
-	// RevokeHandler needs to be set here for each OAuth2 providers,
-	// as mechanism differs from provider to provider.
-	//
-	// Example: box.Revoke
-	RevokeHandler RevokeHandler
 }
 
 // A TokenSource is anything that can return a token.
@@ -70,9 +63,9 @@ type TokenSource interface {
 // Endpoint contains the OAuth 2.0 provider's authorization and token
 // endpoint URLs.
 type Endpoint struct {
-	AuthURL  	string
-	TokenURL 	string
-	RevokeURL 	string
+	AuthURL   string
+	TokenURL  string
+	RevokeURL string
 }
 
 var (
@@ -103,14 +96,6 @@ func (p setParam) setValue(m url.Values) { m.Set(p.k, p.v) }
 // An AuthCodeOption is passed to Config.AuthCodeURL.
 type AuthCodeOption interface {
 	setValue(url.Values)
-}
-
-// Handler to destroy access token.
-type RevokeHandler func(config *Config, token *Token) error
-
-// It revokes or destroys access token pairs. It calls provider's RevokeHandler.
-func (c *Config) Revoke(token *Token) error {
-	return c.RevokeHandler(c, token)
 }
 
 // AuthCodeURL returns a URL to OAuth 2.0 provider's consent page
