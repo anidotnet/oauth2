@@ -65,7 +65,6 @@ type TokenSource interface {
 type Endpoint struct {
 	AuthURL   string
 	TokenURL  string
-	RevokeURL string
 }
 
 var (
